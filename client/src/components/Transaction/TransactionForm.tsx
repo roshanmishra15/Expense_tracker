@@ -95,17 +95,22 @@ export default function TransactionForm({ isOpen, onClose, transaction }: Transa
 
   const onSubmit = async (data: TransactionFormData) => {
     try {
+      const payload = {
+        ...data,
+        amount: Number.isFinite(data.amount) ? Number(data.amount) : 0,
+        date: new Date(data.date).toISOString().split('T')[0],
+      };
       if (transaction) {
         await updateMutation.mutateAsync({
           id: transaction.id,
-          data
+          data: payload
         });
         toast({
           title: "Success",
           description: "Transaction updated successfully!"
         });
       } else {
-        await createMutation.mutateAsync(data);
+        await createMutation.mutateAsync(payload);
         toast({
           title: "Success", 
           description: "Transaction created successfully!"
@@ -156,7 +161,7 @@ export default function TransactionForm({ isOpen, onClose, transaction }: Transa
           <div className="space-y-2">
             <Label htmlFor="amount">Amount</Label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">$</span>
+              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">₹</span>
               <Input
                 id="amount"
                 type="number"

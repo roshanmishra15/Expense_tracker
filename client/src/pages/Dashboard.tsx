@@ -119,7 +119,7 @@ export default function Dashboard() {
                       <p className={`font-semibold font-mono ${
                         transaction.type === 'income' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
                       }`} data-testid="recent-transaction-amount">
-                        {transaction.type === 'income' ? '+' : '-'}${Math.abs(parseFloat(transaction.amount)).toFixed(2)}
+                        {transaction.type === 'income' ? '+' : '-'}₹{Math.abs(parseFloat(transaction.amount)).toFixed(2)}
                       </p>
                       <p className="text-sm text-muted-foreground">
                         {format(new Date(transaction.date), 'MMM dd, h:mm a')}

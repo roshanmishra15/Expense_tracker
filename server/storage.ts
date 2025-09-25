@@ -34,6 +34,8 @@ export interface IStorage {
   
   // Analytics methods
   getAnalytics(userId: string): Promise<AnalyticsData>;
+  // Optional: list users (for admin demo page)
+  getUsers?(): Promise<User[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -366,6 +368,11 @@ export class DatabaseStorage implements IStorage {
       })),
       monthlyTrends
     };
+  }
+
+  async getUsers(): Promise<User[]> {
+    const result = await db.select().from(users).orderBy(asc(users.createdAt));
+    return result;
   }
 }
 

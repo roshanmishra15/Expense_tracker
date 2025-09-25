@@ -80,7 +80,7 @@ export default function CategoryChart({ data }: CategoryChartProps) {
           label: function(context: any) {
             const total = context.dataset.data.reduce((sum: number, val: number) => sum + val, 0);
             const percentage = ((context.parsed / total) * 100).toFixed(1);
-            return `${context.label}: $${context.parsed.toLocaleString()} (${percentage}%)`;
+            return `${context.label}: ₹${context.parsed.toLocaleString()} (${percentage}%)`;
           }
         }
       }

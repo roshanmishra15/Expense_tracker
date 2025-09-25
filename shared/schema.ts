@@ -71,12 +71,23 @@ export const insertCategorySchema = createInsertSchema(categories).omit({
 
 export const selectCategorySchema = createSelectSchema(categories);
 
-export const insertTransactionSchema = createInsertSchema(transactions).omit({
-  id: true,
-  createdAt: true
-}).extend({
-  date: z.string().transform((str) => new Date(str))
-});
+export const insertTransactionSchema = createInsertSchema(transactions)
+  .omit({
+    id: true,
+    createdAt: true,
+  })
+  .extend({
+    amount: z
+      .union([z.string(), z.number()])
+      .transform((value) => {
+        const asNumber = typeof value === 'number' ? value : parseFloat(value);
+        if (Number.isNaN(asNumber)) {
+          throw new Error('Amount must be a valid number');
+        }
+        return asNumber.toFixed(2);
+      }),
+    date: z.string().transform((str) => new Date(str)),
+  });
 
 export const selectTransactionSchema = createSelectSchema(transactions);
 

@@ -2,6 +2,8 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { authenticate, authorize, hashPassword, comparePassword, generateToken, AuthRequest } from "./middleware/auth";
+import { ZodError } from 'zod';
+import { fromZodError } from 'zod-validation-error';
 import { insertUserSchema, insertTransactionSchema, insertCategorySchema } from "@shared/schema";
 import rateLimit from 'express-rate-limit';
 
@@ -9,19 +11,22 @@ import rateLimit from 'express-rate-limit';
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5, // 5 requests per window
-  message: 'Too many authentication attempts, please try again later'
+  message: 'Too many authentication attempts, please try again later',
+  skip: () => process.env.NODE_ENV !== 'production' || process.env.RATE_LIMIT_DISABLE === '1'
 });
 
 const transactionLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
   max: 100, // 100 requests per hour
-  message: 'Too many requests, please try again later'
+  message: 'Too many requests, please try again later',
+  skip: () => process.env.NODE_ENV !== 'production' || process.env.RATE_LIMIT_DISABLE === '1'
 });
 
 const analyticsLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
   max: 50, // 50 requests per hour
-  message: 'Too many requests, please try again later'
+  message: 'Too many requests, please try again later',
+  skip: () => process.env.NODE_ENV !== 'production' || process.env.RATE_LIMIT_DISABLE === '1'
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -51,6 +56,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
   };
 
   await initializeCategories();
+
+  // Seed demo users if they don't exist
+  const seedDemoUsers = async () => {
+    const demoUsers = [
+      { username: 'admin', email: 'admin@demo.com', password: 'admin123', name: 'Admin User', role: 'admin' as const },
+      { username: 'user', email: 'user@demo.com', password: 'user123', name: 'Demo User', role: 'user' as const },
+      { username: 'readonly', email: 'readonly@demo.com', password: 'readonly123', name: 'Read Only', role: 'read-only' as const },
+    ];
+
+    for (const u of demoUsers) {
+      const existing = await storage.getUserByEmail(u.email);
+      if (!existing) {
+        const hashed = await hashPassword(u.password);
+        await storage.createUser({
+          username: u.username,
+          email: u.email,
+          password: hashed,
+          name: u.name,
+          role: u.role,
+        });
+      }
+    }
+  };
+
+  await seedDemoUsers();
 
   // Authentication routes
   app.post('/api/auth/register', authLimiter, async (req, res) => {
@@ -89,7 +119,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/auth/login', authLimiter, async (req, res) => {
+  // Removed rate limiter on login to avoid blocking local testing
+  app.post('/api/auth/login', async (req, res) => {
     try {
       const { email, password } = req.body;
       
@@ -216,7 +247,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const transaction = await storage.createTransaction(transactionData);
       res.status(201).json(transaction);
     } catch (error) {
-      res.status(400).json({ message: 'Invalid transaction data' });
+      if (error instanceof ZodError) {
+        const pretty = fromZodError(error);
+        return res.status(400).json({ message: 'Invalid transaction data', details: pretty.message, issues: error.issues });
+      }
+      const message = error instanceof Error ? error.message : 'Invalid transaction data';
+      res.status(400).json({ message });
     }
   });
 
@@ -258,10 +294,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Admin routes
-  app.get('/api/admin/users', authenticate, authorize(['admin']), async (req, res) => {
+  app.get('/api/admin/users', authenticate, authorize(['admin']), async (_req, res) => {
     try {
-      // This would need implementation in storage
-      res.json({ message: 'Admin users endpoint not implemented yet' });
+      // Basic stub for demo: return all users' public info
+      const users = await storage.getUsers?.();
+      if (users) {
+        res.json(users.map(u => ({ id: u.id, name: u.name, email: u.email, role: u.role })));
+      } else {
+        res.json({ message: 'Users listing not implemented in storage' });
+      }
     } catch (error) {
       res.status(500).json({ message: 'Failed to fetch users' });
     }

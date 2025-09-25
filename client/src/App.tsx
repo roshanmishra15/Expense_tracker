@@ -12,6 +12,7 @@ const Login = React.lazy(() => import("@/pages/Login"));
 const Dashboard = React.lazy(() => import("@/pages/Dashboard"));
 const Transactions = React.lazy(() => import("@/pages/Transactions"));
 const Settings = React.lazy(() => import("@/pages/Settings"));
+const Users = React.lazy(() => import("@/pages/Users"));
 const NotFound = React.lazy(() => import("@/pages/not-found"));
 
 // Loading component for Suspense fallback
@@ -86,6 +87,12 @@ function Router() {
         <Route path="/settings">
           <ProtectedRoute>
             <Settings />
+          </ProtectedRoute>
+        </Route>
+
+        <Route path="/users">
+          <ProtectedRoute>
+            <Users />
           </ProtectedRoute>
         </Route>
 

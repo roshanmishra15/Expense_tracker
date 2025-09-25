@@ -184,7 +184,7 @@ export default function TransactionTable({
                         className={transaction.type === 'income' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}
                         data-testid="transaction-amount"
                       >
-                        {transaction.type === 'income' ? '+' : '-'}${Math.abs(parseFloat(transaction.amount)).toFixed(2)}
+                        {transaction.type === 'income' ? '+' : '-'}₹{Math.abs(parseFloat(transaction.amount)).toFixed(2)}
                       </span>
                     </TableCell>
                     {canEdit && (

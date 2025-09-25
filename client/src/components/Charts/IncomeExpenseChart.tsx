@@ -78,7 +78,7 @@ export default function IncomeExpenseChart({ data }: IncomeExpenseChartProps) {
         borderWidth: 1,
         callbacks: {
           label: function(context: any) {
-            return `${context.dataset.label}: $${context.parsed.y.toLocaleString()}`;
+            return `${context.dataset.label}: ₹${context.parsed.y.toLocaleString()}`;
           }
         }
       }
@@ -100,7 +100,7 @@ export default function IncomeExpenseChart({ data }: IncomeExpenseChartProps) {
         ticks: {
           color: 'hsl(var(--muted-foreground))',
           callback: function(value: any) {
-            return '$' + value.toLocaleString();
+            return '₹' + value.toLocaleString();
           }
         }
       }

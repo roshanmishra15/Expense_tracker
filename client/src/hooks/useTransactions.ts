@@ -58,18 +58,30 @@ export function useCreateTransaction() {
       type: 'income' | 'expense';
       date: string;
     }) => {
+      // Ensure server-friendly payload
+      const payload = {
+        ...transactionData,
+        amount: Number.isFinite(transactionData.amount)
+          ? transactionData.amount.toFixed(2)
+          : transactionData.amount,
+      };
+
       const response = await fetch('/api/transactions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(transactionData)
+        body: JSON.stringify(payload)
       });
       
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to create transaction');
+        let message = 'Failed to create transaction';
+        try {
+          const error = await response.json();
+          message = error.details || error.message || message;
+        } catch {}
+        throw new Error(message);
       }
       
       return response.json();

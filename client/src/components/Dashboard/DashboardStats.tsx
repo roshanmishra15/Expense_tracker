@@ -30,7 +30,7 @@ export default function DashboardStats({ analytics, isLoading }: DashboardStatsP
   const stats = [
     {
       title: 'Total Balance',
-      value: `$${analytics.totalBalance.toLocaleString()}`,
+      value: `₹${analytics.totalBalance.toLocaleString()}`,
       change: analytics.balanceChange,
       icon: Wallet,
       color: 'text-blue-600 dark:text-blue-400',
@@ -39,7 +39,7 @@ export default function DashboardStats({ analytics, isLoading }: DashboardStatsP
     },
     {
       title: 'Monthly Income',
-      value: `$${analytics.monthlyIncome.toLocaleString()}`,
+      value: `₹${analytics.monthlyIncome.toLocaleString()}`,
       change: analytics.incomeChange,
       icon: TrendingUp,
       color: 'text-green-600 dark:text-green-400',
@@ -48,7 +48,7 @@ export default function DashboardStats({ analytics, isLoading }: DashboardStatsP
     },
     {
       title: 'Monthly Expenses',
-      value: `$${analytics.monthlyExpenses.toLocaleString()}`,
+      value: `₹${analytics.monthlyExpenses.toLocaleString()}`,
       change: analytics.expenseChange,
       icon: TrendingDown,
       color: 'text-red-600 dark:text-red-400',
