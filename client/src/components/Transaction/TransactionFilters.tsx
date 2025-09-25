@@ -40,13 +40,13 @@ export default function TransactionFilters({ onFiltersChange, filters }: Transac
   const handleClearFilters = () => {
     onFiltersChange({
       search: '',
-      categoryId: '',
-      type: '',
-      dateRange: ''
+      categoryId: 'all',
+      type: 'all',
+      dateRange: 'all'
     });
   };
 
-  const hasActiveFilters = filters.search || filters.categoryId || filters.type || filters.dateRange;
+  const hasActiveFilters = filters.search || (filters.categoryId && filters.categoryId !== 'all') || (filters.type && filters.type !== 'all') || (filters.dateRange && filters.dateRange !== 'all');
 
   return (
     <Card data-testid="transaction-filters">
@@ -78,7 +78,7 @@ export default function TransactionFilters({ onFiltersChange, filters }: Transac
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Categories</SelectItem>
+                <SelectItem value="all">All Categories</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category.id} value={category.id}>
                     <div className="flex items-center space-x-2">
@@ -102,7 +102,7 @@ export default function TransactionFilters({ onFiltersChange, filters }: Transac
                 <SelectValue placeholder="All Types" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Types</SelectItem>
+                <SelectItem value="all">All Types</SelectItem>
                 <SelectItem value="income">Income</SelectItem>
                 <SelectItem value="expense">Expense</SelectItem>
               </SelectContent>
@@ -120,7 +120,7 @@ export default function TransactionFilters({ onFiltersChange, filters }: Transac
                 <SelectValue placeholder="All Time" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Time</SelectItem>
+                <SelectItem value="all">All Time</SelectItem>
                 <SelectItem value="today">Today</SelectItem>
                 <SelectItem value="week">This Week</SelectItem>
                 <SelectItem value="month">This Month</SelectItem>

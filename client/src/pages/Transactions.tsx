@@ -14,9 +14,9 @@ export default function Transactions() {
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState({
     search: '',
-    categoryId: '',
-    type: '',
-    dateRange: ''
+    categoryId: 'all',
+    type: 'all',
+    dateRange: 'all'
   });
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<TransactionWithCategory | undefined>();
@@ -34,10 +34,10 @@ export default function Transactions() {
     };
 
     if (filters.search) result.search = filters.search;
-    if (filters.categoryId) result.categoryId = filters.categoryId;
-    if (filters.type) result.type = filters.type;
+    if (filters.categoryId && filters.categoryId !== 'all') result.categoryId = filters.categoryId;
+    if (filters.type && filters.type !== 'all') result.type = filters.type;
     
-    if (filters.dateRange) {
+    if (filters.dateRange && filters.dateRange !== 'all') {
       const now = new Date();
       switch (filters.dateRange) {
         case 'today':
