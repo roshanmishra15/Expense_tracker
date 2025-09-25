@@ -1,0 +1,195 @@
+Create a Personal Finance Tracker application that allows users to manage their income, expenses, and view financial analytics.
+
+ 
+
+Tech Stack Requirements
+
+•          Frontend: React 18+
+
+•          Backend: Node.js with Express.js
+
+•          Database: PostgreSQL/ MySQL
+
+•          Caching: Redis
+
+•          Charts: Chart.js or Recharts
+
+Features to Implement
+
+1. User Authentication
+
+•          User registration and login
+
+•          JWT-based authentication
+
+•          Protected routes
+
+•          Role-Based Access Control (RBAC)
+
+o          Support for multiple user roles:
+
+          admin: full access to all features, including user and data management
+
+          user: can manage only their own transactions and view their own analytics
+
+          read-only: can only view their own data (transactions and analytics) but cannot add, edit, or delete anything
+
+o          Backend middleware to restrict routes based on role
+
+o          Frontend conditional rendering (e.g., disabling form buttons for read-only users)
+
+2. Transaction Management
+
+•          Add, edit, delete income/expense transactions (admin and user only)
+
+•          Categorize transactions (Food, Transport, Entertainment, etc.)
+
+•          Search and filter transactions
+
+•          read-only users can view the transaction list and details only
+
+3. Dashboard with Analytics
+
+•          Monthly/yearly spending overview
+
+•          Category-wise expense breakdown
+
+•          Income vs Expense trends
+
+•          Interactive charts and graphs
+
+•          All users, including read-only, can access dashboards
+
+4. Performance Features
+
+•          Lazy loading for different pages/components
+
+•          Pagination for transaction lists
+
+•          Caching for frequently accessed data
+
+•          Rate limiting for API endpoints
+
+Technical Requirements
+
+Frontend Requirements (React)
+
+1. React Hooks Implementation
+
+•          useContext:
+
+o          Create contexts for user authentication and theme management
+
+o          Implement global state for user data and app settings
+
+•          useCallback:
+
+o          Optimize event handlers in transaction forms
+
+o          Prevent unnecessary re-renders in child components
+
+•          useMemo:
+
+o          Optimize expensive calculations (like totals, averages)
+
+o          Memoize filtered/sorted transaction lists
+
+2. Lazy Loading Implementation
+
+•          Use React.lazy() for route-based code splitting
+
+•          Use React.Suspense for loading states
+
+•          Implement virtual scrolling for large transaction lists
+
+3. Charts Integration
+
+•          Use Chart.js or Recharts for data visualization
+
+•          Implement at least 3 different chart types:
+
+o          Pie chart for category distribution
+
+o          Line chart for monthly trends
+
+o          Bar chart for income vs expenses
+
+Backend Requirements (Node.js)
+
+1. Caching Implementation
+
+•          Use Redis for caching frequently accessed data
+
+•          Cache user analytics data for 15 minutes
+
+•          Cache category lists for 1 hour
+
+•          Implement cache invalidation on data updates
+
+2. Rate Limiting
+
+•          Use express-rate-limit middleware
+
+•          Set different limits for different endpoints:
+
+o          Auth endpoints: 5 requests per 15 minutes
+
+o          Transaction endpoints: 100 requests per hour
+
+o          Analytics endpoints: 50 requests per hour
+
+3. Security
+
+•          Implement method to prevent from attacks like XSS and SQL Injection.
+
+•         
+
+•          Implement token based API calling mechanism
+
+4. Role-Based Access Control (RBAC)
+
+•          Add a role field in the users table (default: 'user')
+
+•          Roles:
+
+o          'admin': full privileges
+
+o          'user': can perform CRUD on their own data
+
+o          'read-only': can only view their own transactions and analytics
+
+•          Middleware to verify and enforce permissions based on role from JWT claims
+
+•          Example route protections:
+
+o          GET /api/transactions – accessible to all roles
+
+o          POST/PUT/DELETE /api/transactions – restricted to admin and user
+
+o          GET /api/analytics – accessible to all roles
+
+o          GET /api/users – admin only
+
+Deliverables
+
+Code Repository
+
+•          Well-organized GitHub repository with clear README
+
+•          Proper commit history showing development progress
+
+•          Separate folders for frontend and backend
+
+Documentation
+
+•          API documentation (using Swagger/OpenAPI)
+
+•          Setup instructions for local development
+
+Live Demo
+
+•          Working application with full functionality
+
+•          Demo credentials for admin, user, and read-only roles
+
+•          Performance metrics showing caching effectiveness
